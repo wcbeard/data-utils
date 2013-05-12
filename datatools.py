@@ -3,20 +3,31 @@ import itertools
 import numpy as np
 import pandas as pd
 import re
-import itertools
-import smtplib
-from collections import defaultdict, Counter
-import networkx as nx
-import sys
-import cPickle as pickle
 from operator import itemgetter
-from scipy.stats import gaussian_kde
-import matplotlib.pyplot as plt
+import sys
+from collections import defaultdict
+
+
+def getsize(obj):
+    if type(obj) not in (pd.DataFrame, np.ndarray):
+        return sys.getsizeof(obj)
+    try:
+        return obj.values.nbytes * 8
+    except AttributeError:
+        return obj.nbytes * 8
+
+
+def sizeof_fmt(num):
+    for x in ['bytes', 'KB', 'MB', 'GB']:
+        if num < 1024.0:
+            return "%3.1f %s" % (num, x)
+        num /= 1024.0
+    return "%3.1f %s" % (num, 'TB')
 
 
 def get_sizes(locs, n=30):
     """Returns DataFrame with sizes of objects in namespace.
-    Call with sz = mu.get_sizes(locals())
+    Call with sz = get_sizes(locals())
     """
     objs = {k: getsize(v) for k, v in locs.iteritems()}
     sizes = sorted(objs.iteritems(), key=itemgetter(1), reverse=1)
@@ -44,7 +55,7 @@ class StringEncoder(dict):
     """
 
     def __init__(self, df=None, dtypes=['object'], override=True, columns=None,
-        null_fills=None, verbose=False):
+                 null_fills=None, verbose=False):
         class _ReverseEncoder(dict):
             pass
         self.names = {}
@@ -57,14 +68,14 @@ class StringEncoder(dict):
             self.null_fills.update({np.dtype('object'): ''})
         else:
             self.null_fills = null_fills
-            
+
         if df is not None:
             if self.null_fills != False:
                 null_cols = df.columns[df.apply(lambda s: s.isnull().sum() != 0)]
                 for col in null_cols:
                     dt = df[col].dtype
                     df[col] = df[col].fillna(self.null_fills[dt])
-                    
+
             cols = columns or df.dtypes[df.dtypes.isin(self.dtypes)].index
             self.add_columns(df, cols)
 
@@ -101,7 +112,7 @@ class StringEncoder(dict):
         for col in cols:
             self.add_column(df, col, **kwargs)
         return self
-    
+
     def is_converted(self, df):
         N = len(self)
         inv = []
@@ -130,19 +141,19 @@ class StringEncoder(dict):
             dct = self.inv[col] if inv else self[col]
             df[col] = df[col].map(dct)
         return self
-    
+
     def unapply(self, df):
         "In-place restoring of df's original values."
         return self.apply(df, inv=True)
-    
+
     def check_extras(self, df):
         extras = set(self.columns) - set(df.columns)
         if extras != set() and self.verbose:
             print "Warning, columns '{}' not in Data Frame".format("', '".join(extras))
-        
+
     def fillna():
         pass
-        
+
     @property
     def columns(self):
         return self.keys()
