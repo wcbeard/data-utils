@@ -69,16 +69,17 @@ class StringEncoder(dict):
             self.add_columns(df, cols)
 
     def _safe_setattr(self, obj, attr, val):
+        "Tries to set attribute, but prints error if not possible."
         pat = re.compile(r"^[A-Za-z_][A-Za-z\d_]*")
         if getattr(obj, attr, None) is not None:
             print "Error: Object already has attribute {}".format(attr)
         elif not pat.search(attr):
-            print "Error: {} contains invalid sequence".format(obj, attr)
+            print "Error: Attribute {} contains invalid sequence".format(attr)
         else:
             setattr(obj, attr, val)
 
     def __repr__(self):
-        return np.array(list(se))
+        return "StringEncoder({{'{}'}})".format("', '".join(self))
 
     def add_column(self, df, col, override=False):
         "Takes dataframe and column name(string)"
