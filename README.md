@@ -70,3 +70,25 @@ array([[18859,  1529],
 >>> (Y.ix[test_ix] == pred).mean()
 0.88500502857703534
 ```
+
+To get the original data frame values back, just use the `unapply` method on the string encoder object:
+
+```
+>>> se.unapply(df)
+StringEncoder({'Provider_City', 'Provider_Street_Address', 'Hospital_Referral_Region_Description', 'Provider_State', 'Provider_Name', 'DRG_Definition'})
+>>> df.head()
+                                      DRG_Definition  Provider_Id  \
+0           039 - EXTRACRANIAL PROCEDURES W/O CC/MCC        10001
+1  057 - DEGENERATIVE NERVOUS SYSTEM DISORDERS W/...        10001
+2  064 - INTRACRANIAL HEMORRHAGE OR CEREBRAL INFA...        10001
+3  065 - INTRACRANIAL HEMORRHAGE OR CEREBRAL INFA...        10001
+4  066 - INTRACRANIAL HEMORRHAGE OR CEREBRAL INFA...        10001
+
+                      Provider_Name Provider_Street_Address Provider_City  \
+0  SOUTHEAST ALABAMA MEDICAL CENTER  1108 ROSS CLARK CIRCLE        DOTHAN
+1  SOUTHEAST ALABAMA MEDICAL CENTER  1108 ROSS CLARK CIRCLE        DOTHAN
+2  SOUTHEAST ALABAMA MEDICAL CENTER  1108 ROSS CLARK CIRCLE        DOTHAN
+3  SOUTHEAST ALABAMA MEDICAL CENTER  1108 ROSS CLARK CIRCLE        DOTHAN
+4  SOUTHEAST ALABAMA MEDICAL CENTER  1108 ROSS CLARK CIRCLE        DOTHAN
+...
+```
